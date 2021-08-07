@@ -58,12 +58,12 @@
       <el-table-column prop="gmtCreate" label="添加时间" width="160"/>
       <el-table-column prop="sort" label="排序" width="60"/>
       <el-table-column label="操作" width="200" align="center">
-<!--        <template slot-scope="scope">-->
-<!--          <router-link :to="'/edu/teacher/edit/'"+scope.row.id>-->
-<!--            <el-button type="primary" size="mini" icon="el-icon-edit">修改</el-button>-->
-<!--          </router-link>-->
-<!--          <el-button type="danger" size="mini" icon="el-icon-delete">删除</el-button>-->
-<!--        </template>-->
+        <template slot-scope="scope">
+          <router-link :to="'/teacher/edit/' + scope.row.id">
+            <el-button type="primary" size="mini" icon="el-icon-edit">修改</el-button>
+          </router-link>
+          <el-button @click="removeDataById(scope.row.id)" type="danger" size="mini" icon="el-icon-delete">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -87,13 +87,13 @@ export default {
       list:null,//查询之后接口返回集合
       total:0,//总记录数
       page:1,//当前页
-      limit:2,//每页显示记录数
+      limit:5,//每页显示记录数
       teacherQuery:{}//条件封装对象,
     }
   },
   //======//
   created() {
-    this.getList();
+    this.getList()
   },
   //======//
   methods:{
@@ -110,10 +110,28 @@ export default {
           console.log(error)
         })
     },
+    removeDataById(id){
+
+      this.$confirm('此操作将删除,是否继续','提示',{
+        confirmButtonText:'确定',
+        cancelButtonText:'取消',
+        type:'warning'
+      })
+      .then(()=>{
+        teacher.deleteTeacherId(id)
+          .then(res=>{
+            this.$message({
+              type:'success',
+              message:'删除成功'
+            })
+            this.getList()
+          })
+      })
+    },
     resetData(){
       this.teacherQuery={}
       this.getList()
-    },
+    }
 
     //=====//
   }
