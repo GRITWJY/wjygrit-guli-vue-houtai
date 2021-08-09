@@ -9,6 +9,38 @@
     </el-steps>
 
     <el-form label-width="120px">
+
+      <ul class="chanpterList">
+        <li
+          v-for="chapter in chapterVideoList"
+          :key="chapter.id"
+        >
+          <p>
+            {{ chapter.title }}
+            <span class="acts">
+              <el-button type="text" @click="OpenVideo(chapter.id)">添加小节</el-button>
+              <el-button style="" type="text" @click="openEditChapter(chapter.id)">编辑</el-button>
+              <el-button type="text" @click="remove(chapter.id)">删除</el-button>
+            </span>
+          </p>
+          <!-- 视频 -->
+          <ul class="chanpterList videoList">
+            <li
+              v-for="video in chapter.children"
+              :key="video.id"
+            >
+              <p>{{ video.title }}
+                <span class="acts">
+                  <el-button type="text" @click="openEditVideo(video.id)">编辑</el-button>
+                                  <el-button type="text" @click="removeVideo(video.id)">删除</el-button>
+                              </span>
+              </p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+
       <el-form-item>
         <el-button @click="previous">上一步</el-button>
         <el-button :disabled="saveBtnDisabled" type="primary" @click="next">保存并下一步</el-button>
@@ -18,25 +50,81 @@
 </template>
 
 <script>
+import chapterApi from '../../../api/edu/chapter'
+
 export default {
-  data(){
-    return{
-      saveBtnDisabled:false,
+  data() {
+    return {
+      saveBtnDisabled: false,
+      chapterVideoList: []
     }
   },
   created() {
+    if (this.$route.params.id && this.$route.params) {
+      this.courseId = this.$route.params.id
+      this.getChapterVideo()
+    }
   },
-  methods:{
-    previous(){
-      this.$router.push({path:"/course/info/1"})
+  methods: {
+
+    getChapterVideo() {
+      chapterApi.getAllChapterVideo(this.courseId)
+        .then(res => {
+          this.chapterVideoList = res.data.allChapterVideo
+        })
     },
-    next(){
-      this.$router.push({path:"/course/publish/1"})
+
+    previous() {
+      this.$router.push({ path: '/course/info/1' })
     },
+    next() {
+      this.$router.push({ path: '/course/publish/1' })
+    }
   }
 }
 </script>
 
-<style scoped>
 
+<style scoped>
+.chanpterList {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.chanpterList li {
+  position: relative;
+}
+
+.chanpterList p {
+  float: left;
+  font-size: 20px;
+  margin: 10px 0;
+  padding: 10px;
+  height: 70px;
+  line-height: 50px;
+  width: 100%;
+  border: 1px solid #DDD;
+}
+
+.chanpterList .acts {
+  float: right;
+  font-size: 14px;
+}
+
+.videoList {
+  padding-left: 50px;
+}
+
+.videoList p {
+  float: left;
+  font-size: 14px;
+  margin: 10px 0;
+  padding: 10px;
+  height: 50px;
+  line-height: 30px;
+  width: 100%;
+  border: 1px dotted #DDD;
+}
 </style>
