@@ -108,14 +108,28 @@ export default {
     }
   },
   created() {
-    //
     if (this.$route.params.id && this.$route.params) {
       this.courseId = this.$route.params.id
       this.getInfo();
-    }
+      this.getListTeacher()
 
-    this.getListTeacher()
-    this.getOneSubject()
+    } else {
+      this.getListTeacher()
+      this.getOneSubject()
+    }
+  },
+  watch:{
+    $route(to,from){//路由变化方式
+      if (this.$route.params.id && this.$route.params) {
+        this.courseId = this.$route.params.id
+        this.getInfo();
+        this.getListTeacher()
+      } else {
+        this.courseInfo = {}
+        this.getListTeacher()
+        this.getOneSubject()
+      }
+    }
   },
   methods:{
     //根据课程id查询信息
@@ -123,6 +137,22 @@ export default {
       courseApi.getCouseInfoId(this.courseId)
         .then(res=>{
           this.courseInfo = res.data.courseInfoVo;
+          //回显显示二级数组
+          //1.查询所有的分类,包含一级二级
+          subjectApi.getSubjectList()
+            .then(res=>{
+              //2.获取所有一级分类
+              this.subjectOneList = res.data.list
+
+              //3.遍历所有一级分类
+              for (var i=0;i<this.subjectOneList.length;i++){
+                var onesub = this.subjectOneList[i];
+                if (this.courseInfo.subjectParentId === onesub.id){
+                  this.subjectTwoList = onesub.children
+                }
+              }
+
+            })
         })
     },
     handleAvatarSuccess(res, file){
@@ -151,7 +181,8 @@ export default {
           this.subjectOneList= res.data.list
         })
     },
-    saveOrUpdate(){
+
+    addCourse(){
       courseApi.addCourseInfo(this.courseInfo)
         .then(res=>{
           //提示
@@ -162,6 +193,26 @@ export default {
           //跳转
           this.$router.push({path:"/course/chapter/"+res.data.courseID})
         })
+    },
+    updateCourse(){
+      courseApi.updateCourseInfo(this.courseInfo)
+        .then(res=>{
+          //提示
+          this.$message({
+            type:"success",
+            message:"添加课程信息成功"
+          })
+          //跳转
+          this.$router.push({path:"/course/chapter/"+this.courseId})
+        })
+    },
+
+    saveOrUpdate(){
+      if (!this.courseInfo.id){
+        this.addCourse()
+      } else {
+        this.updateCourse()
+      }
     },
     getListTeacher() {
       courseApi.getListTeacher()
