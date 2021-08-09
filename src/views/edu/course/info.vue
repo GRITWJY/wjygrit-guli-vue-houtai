@@ -62,7 +62,7 @@
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
-          :action="BASE_API + '/eduoss/fileoss'"
+          action="/oss/eduoss/fileoss"
           class="avatar-uploader">
           <img :src="courseInfo.cover" style="width: 100%">
         </el-upload>
@@ -104,13 +104,27 @@ export default {
       subjectOneList:[],
       subjectTwoList:[],
       BASE_API:process.env.BASE_API,
+      courseId:'',
     }
   },
   created() {
+    //
+    if (this.$route.params.id && this.$route.params) {
+      this.courseId = this.$route.params.id
+      this.getInfo();
+    }
+
     this.getListTeacher()
     this.getOneSubject()
   },
   methods:{
+    //根据课程id查询信息
+    getInfo(){
+      courseApi.getCouseInfoId(this.courseId)
+        .then(res=>{
+          this.courseInfo = res.data.courseInfoVo;
+        })
+    },
     handleAvatarSuccess(res, file){
       this.courseInfo.cover = res.data.url
     },

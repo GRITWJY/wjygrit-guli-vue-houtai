@@ -28,7 +28,7 @@
           :width="300"
           :height="300"
           :key="imagecropperKey"
-          :url="BASE_API + '/eduoss/fileoss'"
+          :url="OSS_API + '/eduoss/fileoss'"
           field="file"
           @close="close"
           @crop-upload-success="cropSuccess"/>
@@ -62,6 +62,7 @@ export default {
       imagecropperShow:false,
       imagecropperKey:0,
       BASE_API:process.env.BASE_API,
+      OSS_API:process.env.OSS_API
 
     }
   },
