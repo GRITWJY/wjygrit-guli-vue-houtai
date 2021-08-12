@@ -112,7 +112,6 @@ export default {
       this.courseId = this.$route.params.id
       this.getInfo();
       this.getListTeacher()
-
     } else {
       this.getListTeacher()
       this.getOneSubject()
