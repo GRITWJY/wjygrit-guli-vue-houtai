@@ -1,5 +1,13 @@
 import request from '../../utils/request'
 export default {
+
+  deleteAliyun(videoId){
+    return request({
+      url:'/eduvod/video/removeAlyVideo/'+videoId,
+      method:'delete'
+    })
+  },
+
   addVideo(video){
     return request({
       url:'/eduservice/video/addVideo',

@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/oss':{
-        target:'http://localhost:8003',
+        target:'http://localhost:8002',
         changeOrigin:true,
         pathRewrite:{
           '^/oss':''
